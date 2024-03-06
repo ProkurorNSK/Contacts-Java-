@@ -389,6 +389,107 @@ files:
           }
       }
     learner_created: false
+  - name: src/contacts/Contact.java
+    visible: true
+    text: |
+      package contacts;
+      
+      class Contact {
+          private String name;
+          private String surname;
+          private String number;
+      
+          private Contact(String name, String surname, String number) {
+              this.name = name;
+              this.surname = surname;
+              this.number = number;
+          }
+      
+          @Override
+          public String toString() {
+              return name + " " + surname + ", " + (number.isEmpty() ? "[no number]" : number);
+          }
+      
+          void setName(String name) {
+              this.name = name;
+          }
+      
+          void setSurname(String surname) {
+              this.surname = surname;
+          }
+      
+          void setNumber(String number) {
+              this.number = number;
+          }
+      
+          static class Builder {
+              private String name;
+              private String surname;
+              private String number;
+      
+              Builder() {
+                  name = "";
+                  surname = "";
+                  number = "";
+              }
+      
+              Contact build() {
+                  return new Contact(name, surname, number);
+              }
+      
+              Builder setName(String name) {
+                  this.name = name;
+                  return this;
+              }
+      
+              Builder setSurname(String surname) {
+                  this.surname = surname;
+                  return this;
+              }
+      
+              Builder setNumber(String number) {
+                  this.number = number;
+                  return this;
+              }
+          }
+      }
+    learner_created: true
+  - name: src/contacts/commands/Command.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/Commands.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/Controller.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/PhoneBook.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/AddCommand.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/RemoveCommand.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/EditCommand.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/CountCommand.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/InfoCommand.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/Person.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/Organization.java
+    visible: true
+    learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5326#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Wed, 06 Mar 2024 19:58:30 UTC"
 record: -1

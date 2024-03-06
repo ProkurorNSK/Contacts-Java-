@@ -1,61 +1,52 @@
 package contacts;
 
-class Contact {
-    private String name;
-    private String surname;
-    private String number;
+import java.time.LocalDateTime;
 
-    private Contact(String name, String surname, String number) {
+class Contact {
+    protected String name;
+    protected String number;
+    protected LocalDateTime timeCreated;
+    protected LocalDateTime timeLastEdit;
+    protected boolean isPerson;
+
+    protected Contact(String number, String name) {
+        this.number = checkNumber(number);
         this.name = name;
-        this.surname = surname;
-        this.number = number;
+        this.timeCreated = LocalDateTime.now();
+        this.timeLastEdit = LocalDateTime.now();
     }
 
     @Override
     public String toString() {
-        return name + " " + surname + ", " + (number.isEmpty() ? "[no number]" : number);
+        return "\nNumber: " + (number.isEmpty() ? "[no number]" : number) +
+                "\nTime created: " + timeCreated +
+                "\nTime last edit: " + timeLastEdit;
+    }
+
+    void setNumber(String number) {
+        this.number = checkNumber(number);
+        timeLastEdit = LocalDateTime.now();
     }
 
     void setName(String name) {
         this.name = name;
+        timeLastEdit = LocalDateTime.now();
     }
 
-    void setSurname(String surname) {
-        this.surname = surname;
+    String getName() {
+        return name;
     }
 
-    void setNumber(String number) {
-        this.number = number;
+    boolean isPerson() {
+        return isPerson;
     }
 
-    static class Builder {
-        private String name;
-        private String surname;
-        private String number;
-
-        Builder() {
-            name = "";
-            surname = "";
+    private static String checkNumber(String number) {
+        String numberFormatFilter = "\\+?(\\([0-9a-zA-Z]+\\)|[0-9a-zA-Z]+([ -][(][0-9a-zA-Z]{2,}[)])?)([ -][0-9a-zA-Z]{2,})*";
+        if (!number.matches(numberFormatFilter)) {
             number = "";
+            System.out.println("Wrong number format!");
         }
-
-        Contact build() {
-            return new Contact(name, surname, number);
-        }
-
-        Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        Builder setSurname(String surname) {
-            this.surname = surname;
-            return this;
-        }
-
-        Builder setNumber(String number) {
-            this.number = number;
-            return this;
-        }
+        return number;
     }
 }

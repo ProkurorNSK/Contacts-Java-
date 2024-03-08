@@ -204,6 +204,440 @@ files:
     \        }\n        catch (Exception ex) {\n            return new CheckResult(false,\
     \ \"Can't check the answer\");\n        }\n    }\n}\n"
     learner_created: false
+  - name: src/contacts/Contact.java
+    visible: true
+    text: |
+      package contacts;
+      
+      import java.time.LocalDateTime;
+      
+      class Contact {
+          protected String name;
+          protected String number;
+          protected LocalDateTime timeCreated;
+          protected LocalDateTime timeLastEdit;
+          protected boolean isPerson;
+      
+          protected Contact(String number, String name) {
+              this.number = checkNumber(number);
+              this.name = name;
+              this.timeCreated = LocalDateTime.now();
+              this.timeLastEdit = LocalDateTime.now();
+          }
+      
+          @Override
+          public String toString() {
+              return "\nNumber: " + (number.isEmpty() ? "[no number]" : number) +
+                      "\nTime created: " + timeCreated +
+                      "\nTime last edit: " + timeLastEdit;
+          }
+      
+          void setNumber(String number) {
+              this.number = checkNumber(number);
+              timeLastEdit = LocalDateTime.now();
+          }
+      
+          void setName(String name) {
+              this.name = name;
+              timeLastEdit = LocalDateTime.now();
+          }
+      
+          String getName() {
+              return name;
+          }
+      
+          boolean isPerson() {
+              return isPerson;
+          }
+      
+          private static String checkNumber(String number) {
+              String numberFormatFilter = "\\+?(\\([0-9a-zA-Z]+\\)|[0-9a-zA-Z]+([ -][(][0-9a-zA-Z]{2,}[)])?)([ -][0-9a-zA-Z]{2,})*";
+              if (!number.matches(numberFormatFilter)) {
+                  number = "";
+                  System.out.println("Wrong number format!");
+              }
+              return number;
+          }
+      }
+    learner_created: true
+  - name: src/contacts/commands/Command.java
+    visible: true
+    text: |
+      package contacts.commands;
+      
+      import contacts.PhoneBook;
+      
+      public abstract class Command {
+          protected PhoneBook phoneBook;
+          public abstract void execute();
+      
+          protected Command(PhoneBook phoneBook) {
+              this.phoneBook = phoneBook;
+          }
+      }
+    learner_created: true
+  - name: src/contacts/Organization.java
+    visible: true
+    text: |
+      package contacts;
+      
+      import java.time.LocalDateTime;
+      
+      public class Organization extends Contact {
+          private String address;
+      
+          Organization(String number, String name, String address) {
+              super(number, name);
+              this.address = address;
+              isPerson = false;
+          }
+      
+          public void setAddress(String address) {
+              this.address = address;
+              timeLastEdit = LocalDateTime.now();
+          }
+      
+          @Override
+          public String toString() {
+              return "Organization name: " + name +
+                      "\nAddress: " + address +
+                      super.toString();
+          }
+      }
+    learner_created: true
+  - name: src/contacts/Person.java
+    visible: true
+    text: |
+      package contacts;
+      
+      import java.time.LocalDate;
+      import java.time.LocalDateTime;
+      
+      class Person extends Contact {
+      
+          private String surname;
+          private LocalDate birthDate;
+          private String gender;
+      
+          Person(String number, String name, String surname, LocalDate birthDate, String gender) {
+              super(number, name);
+              this.surname = surname;
+              this.birthDate = birthDate;
+              this.gender = gender;
+              isPerson = true;
+          }
+      
+          void setSurname(String surname) {
+              this.surname = surname;
+              timeLastEdit = LocalDateTime.now();
+          }
+      
+          void setBirthDate(LocalDate birthDate) {
+              this.birthDate = birthDate;
+              timeLastEdit = LocalDateTime.now();
+          }
+      
+          void setGender(String gender) {
+              this.gender = gender;
+              timeLastEdit = LocalDateTime.now();
+          }
+      
+          @Override
+          public String toString() {
+              return "Name: " + name +
+                      "\nSurname: " + surname +
+                      "\nBirth date: " + (birthDate == null ? "[no data]" : birthDate) +
+                      "\nGender: " + (gender.isEmpty() ? "[no data]" : gender) +
+                      super.toString();
+          }
+      
+          @Override
+          String getName() {
+              return super.getName() + " " + surname;
+          }
+      }
+    learner_created: true
+  - name: src/contacts/commands/InfoCommand.java
+    visible: true
+    text: |
+      package contacts.commands;
+      
+      import contacts.PhoneBook;
+      
+      public class InfoCommand extends Command {
+          public InfoCommand(PhoneBook phoneBook) {
+              super(phoneBook);
+          }
+      
+          @Override
+          public void execute() {
+              phoneBook.printInfo();
+          }
+      }
+    learner_created: true
+  - name: src/contacts/commands/EditCommand.java
+    visible: true
+    text: |
+      package contacts.commands;
+      
+      import contacts.PhoneBook;
+      
+      public class EditCommand extends Command {
+          public EditCommand(PhoneBook phoneBook) {
+              super(phoneBook);
+          }
+      
+          @Override
+          public void execute() {
+              phoneBook.editContact();
+          }
+      }
+    learner_created: true
+  - name: src/contacts/commands/AddCommand.java
+    visible: true
+    text: |
+      package contacts.commands;
+      
+      import contacts.PhoneBook;
+      
+      public class AddCommand extends Command {
+          public AddCommand(PhoneBook phoneBook) {
+              super(phoneBook);
+          }
+      
+          @Override
+          public void execute() {
+              phoneBook.addContact();
+          }
+      }
+    learner_created: true
+  - name: src/contacts/commands/Commands.java
+    visible: true
+    text: |
+      package contacts.commands;
+      
+      import java.util.Arrays;
+      import java.util.Objects;
+      
+      public enum Commands {
+          ADD("add"),
+          REMOVE("remove"),
+          EDIT("edit"),
+          COUNT("count"),
+          INFO("info"),
+          EXIT("exit");
+      
+      
+          private final String name;
+      
+          Commands(String name) {
+              this.name = name;
+          }
+      
+          public static String getList() {
+              StringBuilder result = new StringBuilder();
+              Commands[] values = Commands.values();
+              for (int i = 0; i < values.length; i++) {
+                  result.append(values[i].name);
+                  if (i < values.length - 1) {
+                      result.append(", ");
+                  }
+              }
+              return result.toString();
+          }
+      
+          public static Commands getCommandByName(String name) {
+              return Arrays.stream(Commands.values()).filter(value -> Objects.equals(value.name, name)).findFirst().orElse(null);
+          }
+      
+      }
+    learner_created: true
+  - name: src/contacts/commands/RemoveCommand.java
+    visible: true
+    text: |
+      package contacts.commands;
+      
+      import contacts.PhoneBook;
+      
+      public class RemoveCommand extends Command {
+          public RemoveCommand(PhoneBook phoneBook) {
+              super(phoneBook);
+          }
+      
+          @Override
+          public void execute() {
+              phoneBook.removeContact();
+          }
+      }
+    learner_created: true
+  - name: src/contacts/PhoneBook.java
+    visible: true
+    text: |
+      package contacts;
+      
+      import java.time.LocalDate;
+      import java.util.LinkedList;
+      import java.util.List;
+      import java.util.Objects;
+      import java.util.Scanner;
+      
+      public class PhoneBook {
+          private final List<Contact> contacts = new LinkedList<>();
+          private final static Scanner sc = Main.sc;
+      
+          public void editContact() {
+              if (contacts.isEmpty()) {
+                  System.out.println("No records to edit!");
+              } else {
+                  printContacts();
+                  System.out.print("Select a record: ");
+                  String input = sc.nextLine();
+                  Contact contact = contacts.get(Integer.parseInt(input) - 1);
+                  if (contact.isPerson()) {
+                      Person person = (Person) contact;
+                      System.out.print("Select a field (name, surname, birth, gender, number): ");
+                      input = sc.nextLine();
+                      System.out.printf("Enter %s: ", input);
+                      String field = sc.nextLine();
+                      switch (input) {
+                          case "name" -> person.setName(field);
+                          case "surname" -> person.setSurname(field);
+                          case "birth" -> person.setBirthDate(checkData(field));
+                          case "gender" -> person.setGender(checkGender(field));
+                          case "number" -> person.setNumber(field);
+                      }
+                  } else {
+                      Organization organization = (Organization) contact;
+                      System.out.print("Select a field (address, number): ");
+                      input = sc.nextLine();
+                      System.out.printf("Enter %s: ", input);
+                      String field = sc.nextLine();
+                      switch (input) {
+                          case "address" -> organization.setAddress(field);
+                          case "number" -> organization.setNumber(field);
+                      }
+                  }
+                  System.out.println("The record updated!");
+              }
+          }
+      
+          public void printInfo() {
+              printContacts();
+              System.out.print("Enter index to show info: ");
+              System.out.println(contacts.get(Integer.parseInt(sc.nextLine()) - 1));
+          }
+      
+          public void removeContact() {
+              if (contacts.isEmpty()) {
+                  System.out.println("No records to remove!");
+              } else {
+                  printContacts();
+                  System.out.print("Select a record: ");
+                  String input = sc.nextLine();
+                  contacts.remove(Integer.parseInt(input) - 1);
+                  System.out.println("The record removed!");
+              }
+          }
+      
+          public void addContact() {
+              Contact contact = null;
+              System.out.print("Enter the type (person, organization): ");
+              String type = sc.nextLine();
+              if (Objects.equals(type, "person")) {
+                  System.out.print("Enter the name of the person: ");
+                  String name = sc.nextLine();
+                  System.out.print("Enter the surname of the person: ");
+                  String surname = sc.nextLine();
+                  System.out.print("Enter the birth date: ");
+                  String birthDate = sc.nextLine();
+                  LocalDate data = checkData(birthDate);
+                  System.out.print("Enter the gender (M, F): ");
+                  String gender = sc.nextLine();
+                  gender = checkGender(gender);
+                  System.out.print("Enter the number: ");
+                  String number = sc.nextLine();
+                  contact = new Person(number, name, surname, data, gender);
+              } else if (Objects.equals(type, "organization")) {
+                  System.out.print("Enter the organization name: ");
+                  String name = sc.nextLine();
+                  System.out.print("Enter the address: ");
+                  String address = sc.nextLine();
+                  System.out.print("Enter the number: ");
+                  String number = sc.nextLine();
+                  contact = new Organization(number, name, address);
+              }
+              contacts.add(contact);
+              System.out.println("The record added.");
+          }
+      
+          private static LocalDate checkData(String birthDate) {
+              LocalDate data;
+              try {
+                  data = LocalDate.parse(birthDate);
+              } catch (Exception e) {
+                  System.out.println("Bad birth date!");
+                  data = null;
+              }
+              return data;
+          }
+      
+          private static String checkGender(String gender) {
+              if (!Objects.equals(gender, "M") && !Objects.equals(gender, "F")) {
+                  System.out.println("Bad gender!");
+                  gender = "";
+              }
+              return gender;
+          }
+      
+          public void countContacts() {
+              System.out.printf("The Phone Book has %d records.\n", contacts.size());
+          }
+      
+          private void printContacts() {
+              for (int i = 1; i <= contacts.size(); i++) {
+                  System.out.printf("%d. %s\n", i, contacts.get(i - 1).getName());
+              }
+          }
+      }
+    learner_created: true
+  - name: src/contacts/Controller.java
+    visible: true
+    text: |-
+      package contacts;
+      
+      import contacts.commands.Command;
+      
+      public class Controller {
+      
+          private Command command;
+      
+          void setCommand(Command command) {
+              this.command = command;
+          }
+      
+          void executeCommand() {
+              command.execute();
+          }
+      }
+    learner_created: true
+  - name: src/contacts/commands/CountCommand.java
+    visible: true
+    text: |
+      package contacts.commands;
+      
+      import contacts.PhoneBook;
+      
+      public class CountCommand extends Command {
+          public CountCommand(PhoneBook phoneBook) {
+              super(phoneBook);
+          }
+      
+          @Override
+          public void execute() {
+              phoneBook.countContacts();
+          }
+      }
+    learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5327#comment
 status: Unchecked
 record: -1

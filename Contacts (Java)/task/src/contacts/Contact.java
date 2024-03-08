@@ -1,20 +1,23 @@
 package contacts;
 
+import contacts.commands.Commands;
+
 import java.time.LocalDateTime;
 
-class Contact {
+abstract class Contact {
     protected String name;
     protected String number;
     protected LocalDateTime timeCreated;
     protected LocalDateTime timeLastEdit;
-    protected boolean isPerson;
 
-    protected Contact(String number, String name) {
-        this.number = checkNumber(number);
-        this.name = name;
-        this.timeCreated = LocalDateTime.now();
-        this.timeLastEdit = LocalDateTime.now();
+    protected Contact() {
+        this.timeCreated = LocalDateTime.now().withSecond(0).withNano(0);
+        this.timeLastEdit = LocalDateTime.now().withSecond(0).withNano(0);
     }
+
+    abstract String[] possibleFields();
+    abstract void setField(String field, String value);
+    abstract String getField(String field);
 
     @Override
     public String toString() {
@@ -25,20 +28,16 @@ class Contact {
 
     void setNumber(String number) {
         this.number = checkNumber(number);
-        timeLastEdit = LocalDateTime.now();
+        timeLastEdit = LocalDateTime.now().withSecond(0).withNano(0);
     }
 
     void setName(String name) {
         this.name = name;
-        timeLastEdit = LocalDateTime.now();
+        timeLastEdit = LocalDateTime.now().withSecond(0).withNano(0);
     }
 
     String getName() {
         return name;
-    }
-
-    boolean isPerson() {
-        return isPerson;
     }
 
     private static String checkNumber(String number) {
@@ -48,5 +47,17 @@ class Contact {
             System.out.println("Wrong number format!");
         }
         return number;
+    }
+
+    public String getListFields() {
+        StringBuilder result = new StringBuilder();
+        String[] fields = possibleFields();
+        for (int i = 0; i < fields.length; i++) {
+            result.append(fields[i]);
+            if (i < fields.length - 1) {
+                result.append(", ");
+            }
+        }
+        return result.toString();
     }
 }

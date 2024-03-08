@@ -1,6 +1,5 @@
 package contacts;
 
-import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -16,32 +15,13 @@ public class PhoneBook {
         } else {
             printContacts();
             System.out.print("Select a record: ");
-            String input = sc.nextLine();
-            Contact contact = contacts.get(Integer.parseInt(input) - 1);
-            if (contact.isPerson()) {
-                Person person = (Person) contact;
-                System.out.print("Select a field (name, surname, birth, gender, number): ");
-                input = sc.nextLine();
-                System.out.printf("Enter %s: ", input);
-                String field = sc.nextLine();
-                switch (input) {
-                    case "name" -> person.setName(field);
-                    case "surname" -> person.setSurname(field);
-                    case "birth" -> person.setBirthDate(checkData(field));
-                    case "gender" -> person.setGender(checkGender(field));
-                    case "number" -> person.setNumber(field);
-                }
-            } else {
-                Organization organization = (Organization) contact;
-                System.out.print("Select a field (address, number): ");
-                input = sc.nextLine();
-                System.out.printf("Enter %s: ", input);
-                String field = sc.nextLine();
-                switch (input) {
-                    case "address" -> organization.setAddress(field);
-                    case "number" -> organization.setNumber(field);
-                }
-            }
+            String number = sc.nextLine();
+            Contact contact = contacts.get(Integer.parseInt(number) - 1);
+            System.out.printf("Select a field (%s): ", contact.getListFields());
+            String field = sc.nextLine();
+            System.out.printf("Enter %s: ", field);
+            String value = sc.nextLine();
+            contact.setField(field, value);
             System.out.println("The record updated!");
         }
     }
@@ -69,49 +49,17 @@ public class PhoneBook {
         System.out.print("Enter the type (person, organization): ");
         String type = sc.nextLine();
         if (Objects.equals(type, "person")) {
-            System.out.print("Enter the name of the person: ");
-            String name = sc.nextLine();
-            System.out.print("Enter the surname of the person: ");
-            String surname = sc.nextLine();
-            System.out.print("Enter the birth date: ");
-            String birthDate = sc.nextLine();
-            LocalDate data = checkData(birthDate);
-            System.out.print("Enter the gender (M, F): ");
-            String gender = sc.nextLine();
-            gender = checkGender(gender);
-            System.out.print("Enter the number: ");
-            String number = sc.nextLine();
-            contact = new Person(number, name, surname, data, gender);
+            contact = new Person();
         } else if (Objects.equals(type, "organization")) {
-            System.out.print("Enter the organization name: ");
-            String name = sc.nextLine();
-            System.out.print("Enter the address: ");
-            String address = sc.nextLine();
-            System.out.print("Enter the number: ");
-            String number = sc.nextLine();
-            contact = new Organization(number, name, address);
+            contact = new Organization();
+        }
+        String[] fields = contact != null ? contact.possibleFields() : new String[0];
+        for (String field : fields) {
+            System.out.printf("Enter the %s: ", field);
+            contact.setField(field, sc.nextLine());
         }
         contacts.add(contact);
         System.out.println("The record added.");
-    }
-
-    private static LocalDate checkData(String birthDate) {
-        LocalDate data;
-        try {
-            data = LocalDate.parse(birthDate);
-        } catch (Exception e) {
-            System.out.println("Bad birth date!");
-            data = null;
-        }
-        return data;
-    }
-
-    private static String checkGender(String gender) {
-        if (!Objects.equals(gender, "M") && !Objects.equals(gender, "F")) {
-            System.out.println("Bad gender!");
-            gender = "";
-        }
-        return gender;
     }
 
     public void countContacts() {

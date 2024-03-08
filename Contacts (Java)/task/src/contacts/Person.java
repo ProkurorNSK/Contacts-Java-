@@ -1,10 +1,11 @@
 package contacts;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-class Person extends Contact {
+class Person extends Contact implements Serializable {
 
     private String surname;
     private LocalDate birthDate;

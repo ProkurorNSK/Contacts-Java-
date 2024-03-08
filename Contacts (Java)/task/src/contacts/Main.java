@@ -10,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         Controller controller = new Controller();
-        PhoneBook phoneBook = new PhoneBook();
+        PhoneBook phoneBook = new PhoneBook(args);
         Command addCommand = new AddCommand(phoneBook);
         Command removeCommand = new RemoveCommand(phoneBook);
         Command editCommand = new EditCommand(phoneBook);
@@ -36,6 +36,4 @@ public class Main {
             System.out.println();
         }
     }
-
-
 }

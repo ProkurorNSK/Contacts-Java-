@@ -1,13 +1,41 @@
 package contacts;
 
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class PhoneBook {
-    private final List<Contact> contacts = new LinkedList<>();
+    private List<Contact> contacts;
+
+    private final File file;
     private final static Scanner sc = Main.sc;
+
+    public PhoneBook(String[] path) {
+        String dir = ".\\Contacts (Java)\\task\\src\\contacts\\";
+        if (path.length == 0 || !new File(dir + path[0]).exists() || new File(dir + path[0]).isDirectory()) {
+            this.file = new File(dir + "phonebook.db");
+            try {
+                //noinspection ResultOfMethodCallIgnored
+                this.file.createNewFile();
+            } catch (IOException ignored) {
+            }
+            contacts = new LinkedList<>();
+            savePhoneBook();
+        } else {
+            this.file = new File(dir + path[0]);
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(this.file))){
+                //noinspection unchecked
+                contacts = (List<Contact>) ois.readObject();
+                System.out.println("open " + path[0]);
+                System.out.println();
+            } catch (Exception ignored) {
+                contacts = new LinkedList<>();
+                savePhoneBook();
+            }
+        }
+    }
 
     public void editContact() {
         if (contacts.isEmpty()) {
@@ -23,6 +51,14 @@ public class PhoneBook {
             String value = sc.nextLine();
             contact.setField(field, value);
             System.out.println("The record updated!");
+            savePhoneBook();
+        }
+    }
+
+    private void savePhoneBook() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.file))){
+            oos.writeObject(contacts);
+        } catch (Exception ignored) {
         }
     }
 
@@ -41,6 +77,7 @@ public class PhoneBook {
             String input = sc.nextLine();
             contacts.remove(Integer.parseInt(input) - 1);
             System.out.println("The record removed!");
+            savePhoneBook();
         }
     }
 
@@ -60,6 +97,7 @@ public class PhoneBook {
         }
         contacts.add(contact);
         System.out.println("The record added.");
+        savePhoneBook();
     }
 
     public void countContacts() {

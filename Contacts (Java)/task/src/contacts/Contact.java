@@ -1,10 +1,9 @@
 package contacts;
 
-import contacts.commands.Commands;
-
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-abstract class Contact {
+abstract class Contact implements Serializable {
     protected String name;
     protected String number;
     protected LocalDateTime timeCreated;
@@ -16,14 +15,14 @@ abstract class Contact {
     }
 
     abstract String[] possibleFields();
+
     abstract void setField(String field, String value);
+
     abstract String getField(String field);
 
     @Override
     public String toString() {
-        return "\nNumber: " + (number.isEmpty() ? "[no number]" : number) +
-                "\nTime created: " + timeCreated +
-                "\nTime last edit: " + timeLastEdit;
+        return "\nNumber: " + (number.isEmpty() ? "[no number]" : number) + "\nTime created: " + timeCreated + "\nTime last edit: " + timeLastEdit;
     }
 
     void setNumber(String number) {

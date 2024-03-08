@@ -36,8 +36,8 @@ class Person extends Contact implements Serializable {
         return switch (field) {
             case "name" -> name;
             case "surname" -> surname;
-            case "birth" -> birthDate.toString();
-            case "gender" -> gender;
+            case "birth" -> birthDate == null ? "[no data]" : birthDate.toString();
+            case "gender" -> gender.isEmpty() ? "[no data]" : gender;
             case "number" -> number;
             default -> null;
         };

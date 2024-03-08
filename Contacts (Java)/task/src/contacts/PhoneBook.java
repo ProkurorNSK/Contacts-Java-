@@ -5,10 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class PhoneBook {
     private List<Contact> contacts;
 
+    private int currentIndex;
     private final File file;
     private final static Scanner sc = Main.sc;
 
@@ -25,7 +27,7 @@ public class PhoneBook {
             savePhoneBook();
         } else {
             this.file = new File(dir + path[0]);
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(this.file))){
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(this.file))) {
                 //noinspection unchecked
                 contacts = (List<Contact>) ois.readObject();
                 System.out.println("open " + path[0]);
@@ -37,48 +39,15 @@ public class PhoneBook {
         }
     }
 
-    public void editContact() {
-        if (contacts.isEmpty()) {
-            System.out.println("No records to edit!");
-        } else {
-            printContacts();
-            System.out.print("Select a record: ");
-            String number = sc.nextLine();
-            Contact contact = contacts.get(Integer.parseInt(number) - 1);
-            System.out.printf("Select a field (%s): ", contact.getListFields());
-            String field = sc.nextLine();
-            System.out.printf("Enter %s: ", field);
-            String value = sc.nextLine();
-            contact.setField(field, value);
-            System.out.println("The record updated!");
-            savePhoneBook();
-        }
-    }
-
     private void savePhoneBook() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.file))){
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(this.file))) {
             oos.writeObject(contacts);
         } catch (Exception ignored) {
         }
     }
 
-    public void printInfo() {
-        printContacts();
-        System.out.print("Enter index to show info: ");
-        System.out.println(contacts.get(Integer.parseInt(sc.nextLine()) - 1));
-    }
-
-    public void removeContact() {
-        if (contacts.isEmpty()) {
-            System.out.println("No records to remove!");
-        } else {
-            printContacts();
-            System.out.print("Select a record: ");
-            String input = sc.nextLine();
-            contacts.remove(Integer.parseInt(input) - 1);
-            System.out.println("The record removed!");
-            savePhoneBook();
-        }
+    public void setCurrentIndex(int currentIndex) {
+        this.currentIndex = currentIndex;
     }
 
     public void addContact() {
@@ -100,12 +69,55 @@ public class PhoneBook {
         savePhoneBook();
     }
 
+    public void printContact() {
+        System.out.println(contacts.get(currentIndex));
+    }
+
+    public void editContact() {
+        Contact contact = contacts.get(currentIndex);
+        System.out.printf("Select a field (%s): ", contact.getListFields());
+        String field = sc.nextLine();
+        System.out.printf("Enter %s: ", field);
+        String value = sc.nextLine();
+        contact.setField(field, value);
+        System.out.println("Saved");
+        savePhoneBook();
+        printContact();
+    }
+
+    public void deleteContact() {
+        contacts.remove(currentIndex);
+        System.out.println("The record removed!");
+        savePhoneBook();
+    }
+
     public void countContacts() {
         System.out.printf("The Phone Book has %d records.\n", contacts.size());
     }
 
-    private void printContacts() {
+    public void printList() {
         for (int i = 1; i <= contacts.size(); i++) {
+            System.out.printf("%d. %s\n", i, contacts.get(i - 1).getName());
+        }
+    }
+
+    public void searchContact() {
+        System.out.print("Enter search query: ");
+        String query = sc.nextLine();
+
+        List<Contact> resultSearch = new LinkedList<>();
+        for (Contact contact : contacts) {
+            String[] fields = contact != null ? contact.possibleFields() : new String[0];
+            for (String field : fields) {
+                if (contact.getField(field).matches(query)) {
+                    resultSearch.add(contact);
+                    break;
+                }
+            }
+        }
+
+        System.out.printf("Found %d results:\n", resultSearch.size());
+        for (int i = 1; i <= resultSearch.size(); i++) {
             System.out.printf("%d. %s\n", i, contacts.get(i - 1).getName());
         }
     }

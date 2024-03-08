@@ -357,7 +357,7 @@ files:
           }
       }
     learner_created: true
-  - name: src/contacts/commands/InfoCommand.java
+  - name: src/contacts/commands/ListCommand.java
     visible: true
     text: |
       package contacts.commands;
@@ -452,7 +452,7 @@ files:
       
       }
     learner_created: true
-  - name: src/contacts/commands/RemoveCommand.java
+  - name: src/contacts/commands/DeleteCommand.java
     visible: true
     text: |
       package contacts.commands;
@@ -641,6 +641,18 @@ files:
   - name: src/contacts/phonebook.db
     visible: true
     is_binary: true
+    learner_created: true
+  - name: src/contacts/commands/ModeMenu.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/MenuCommand.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/NumberCommand.java
+    visible: true
+    learner_created: true
+  - name: src/contacts/commands/SearchCommand.java
+    visible: true
     learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5327#comment
 status: Unchecked

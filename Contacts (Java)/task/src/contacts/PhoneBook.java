@@ -1,16 +1,13 @@
 package contacts;
 
 import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.regex.Pattern;
+import java.util.*;
 
 public class PhoneBook {
     private List<Contact> contacts;
+    private List<Contact> resultSearch;
 
-    private int currentIndex;
+    private Contact currentContact;
     private final File file;
     private final static Scanner sc = Main.sc;
 
@@ -46,8 +43,12 @@ public class PhoneBook {
         }
     }
 
-    public void setCurrentIndex(int currentIndex) {
-        this.currentIndex = currentIndex;
+    public void setCurrentContact(int currentIndex, boolean isSearch) {
+        if (isSearch) {
+            currentContact = resultSearch.get(currentIndex);
+        } else {
+            currentContact = contacts.get(currentIndex);
+        }
     }
 
     public void addContact() {
@@ -70,23 +71,22 @@ public class PhoneBook {
     }
 
     public void printContact() {
-        System.out.println(contacts.get(currentIndex));
+        System.out.println(currentContact);
     }
 
     public void editContact() {
-        Contact contact = contacts.get(currentIndex);
-        System.out.printf("Select a field (%s): ", contact.getListFields());
+        System.out.printf("Select a field (%s): ", currentContact.getListFields());
         String field = sc.nextLine();
         System.out.printf("Enter %s: ", field);
         String value = sc.nextLine();
-        contact.setField(field, value);
+        currentContact.setField(field, value);
         System.out.println("Saved");
         savePhoneBook();
         printContact();
     }
 
     public void deleteContact() {
-        contacts.remove(currentIndex);
+        contacts.remove(currentContact);
         System.out.println("The record removed!");
         savePhoneBook();
     }
@@ -105,11 +105,11 @@ public class PhoneBook {
         System.out.print("Enter search query: ");
         String query = sc.nextLine();
 
-        List<Contact> resultSearch = new LinkedList<>();
+        resultSearch = new LinkedList<>();
         for (Contact contact : contacts) {
             String[] fields = contact != null ? contact.possibleFields() : new String[0];
             for (String field : fields) {
-                if (contact.getField(field).matches(query)) {
+                if (contact.getField(field).matches("(?is).*" + query + ".*")) {
                     resultSearch.add(contact);
                     break;
                 }
@@ -118,7 +118,7 @@ public class PhoneBook {
 
         System.out.printf("Found %d results:\n", resultSearch.size());
         for (int i = 1; i <= resultSearch.size(); i++) {
-            System.out.printf("%d. %s\n", i, contacts.get(i - 1).getName());
+            System.out.printf("%d. %s\n", i, resultSearch.get(i - 1).getName());
         }
     }
 }

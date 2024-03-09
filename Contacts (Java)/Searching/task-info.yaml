@@ -655,5 +655,26 @@ files:
     visible: true
     learner_created: true
 feedback_link: https://hyperskill.org/learn/step/5327#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: "Wrong answer in test #8\n\nSearch is not working\n\nPlease find below\
+    \ the output of your program during this failed test.\nNote that the &#39;&gt;&#39;\
+    \ character indicates the beginning of the input line.\n\n---\n\n[menu] Enter\
+    \ action (add, list, search, count, exit): &gt; add\nEnter the type (person, organization):\
+    \ &gt; organization\nEnter the name: &gt; Pizza Shop\nEnter the address: &gt;\
+    \ Wall St. 1\nEnter the number: &gt; +0 (123) 456-789-9999\nThe record added.\n\
+    \n[menu] Enter action (add, list, search, count, exit): &gt; add\nEnter the type\
+    \ (person, organization): &gt; person\nEnter the name: &gt; John\nEnter the surname:\
+    \ &gt; Smith\nEnter the birth: &gt; \nBad birth date!\nEnter the gender: &gt;\
+    \ \nBad gender!\nEnter the number: &gt; 123 456 789\nThe record added.\n\n[menu]\
+    \ Enter action (add, list, search, count, exit): &gt; add\nEnter the type (person,\
+    \ organization): &gt; organization\nEnter the name: &gt; PizzaNuts\nEnter the\
+    \ address: &gt; Wall St. 6\nEnter the number: &gt; +0 (123) 456-789-9999\nThe\
+    \ record added.\n\n[menu] Enter action (add, list, search, count, exit): &gt;\
+    \ search\nEnter search query: &gt; pizz\nFound 0 results:\n\n[search] Enter action\
+    \ ([number], back, again): &gt; 1\nOrganization name: Pizza Shop\nAddress: Wall\
+    \ St. 1\nNumber: +0 (123) 456-789-9999\nTime created: 2024-03-08T20:58\nTime last\
+    \ edit: 2024-03-08T20:58\n\n[record] Enter action (edit, delete, menu): &gt; menu\n\
+    \n[menu] Enter action (add, list, search, count, exit): &gt; exit"
+  time: "Fri, 08 Mar 2024 13:58:54 UTC"
 record: -1

@@ -42,7 +42,7 @@ public class Main {
                 case SEARCH, AGAIN -> controller.setCommand(searchCommand);
                 case BACK, MENU -> controller.setCommand(menuCommand);
                 case NUMBER -> {
-                    phoneBook.setCurrentIndex(number);
+                    phoneBook.setCurrentContact(number, modeMenu == ModeMenu.SEARCH);
                     controller.setCommand(numberCommand);
                 }
                 case EXIT -> {
